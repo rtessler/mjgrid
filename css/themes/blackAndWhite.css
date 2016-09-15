@@ -1,0 +1,16 @@
+﻿.mj-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-style: normal;
+    font-size: 13px;
+}
+
+.mj-list .mj-item { background: #fff; color: #000; }
+
+/* mj-grid */
+
+.mj-grid .mj-grid-table {
+    font-size: 12px;
+    background: #fff;
+}
+
+.mj-grid .mj-grid-header { background: #e8e8e8; }  

@@ -1,0 +1,58 @@
+﻿.mj-listbox {
+    width: 100%;
+    height: 100%;           /* height depends on container */
+    min-width: 80px;
+    overflow: auto;
+}
+
+.mj-listbox .mj-table { position: relative; }   /* need this for virtual scrolling */
+
+.mj-listbox .mj-row { outline: none; }
+
+.mj-listbox .mj-checkbox-box, .mj-listbox .mj-radio, .mj-listbox .mj-image, .mj-listbox .mj-text {
+    vertical-align: middle;
+    border-collapse: initial;
+}
+
+.mj-listbox .mj-cell { text-align: left; vertical-align: middle; }
+
+.mj-listbox .mj-checkbox-cell { width: 22px; height: 19px; }
+.mj-listbox .mj-radio-cell { width: 22px; height: 19px; }
+.mj-listbox .mj-image-cell { width: 22px; height: 19px; }
+.mj-listbox .mj-text-cell { height: 19px; }
+
+.mj-listbox .mj-image { margin-right: 5px; position: relative; }
+
+.mj-listbox .mj-checkbox-box { border: 1px solid #aaa; 
+                                    width: 13px; 
+                                    height: 13px;  
+                                    margin-right: 5px;
+                                    background-color: #efefef; 
+                                    box-sizing: content-box;
+}
+
+.mj-listbox .mj-checkbox-box.checked .mj-tick { background-image: url('../images/tick-13x13.png'); position: relative; top: -1px; left: -1px; }   /* smaller image */
+
+.mj-listbox .mj-checkbox-box.half-ticked .mj-tick { background-image: url('../images/half-tick-13x13.png'); position: relative; top: -1px; left: -1px; }   /* smaller image */
+
+.mj-listbox .mj-radio { margin-right: 5px; }
+
+.mj-listbox .mj-row.mj-selected { background: #efefef; }
+
+.mj-listbox .mj-row.mj-hover .mj-text { background: #e8e8e8; }
+
+.mj-listbox .mj-table.mj-horizontal .mj-row { float: left; margin-right: 5px; }
+
+.mj-listbox .mj-vertical-scrollbar-container {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+
+.mj-listbox .mj-horizontal-scrollbar-container {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}

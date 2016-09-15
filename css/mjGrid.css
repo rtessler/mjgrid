@@ -1,0 +1,112 @@
+﻿.mj-grid {
+    width: 100%;
+    height: 100%;
+    max-height: inherit; /* dont use absolute or the grid cant grow in height dynamically */
+    border: 1px solid transparent;
+    /*box-sizing: border-box;*/
+    overflow: hidden;
+}
+
+.mj-grid .mj-grid-container {
+    position: relative; /* dont use absolute or the grid cant grow in height dynamically */
+    left: 0px;
+}
+
+.mj-grid .mj-grid-table {
+    position: relative;
+    width: 100%;
+    display: table; 
+}
+
+.mj-grid-header-row {
+    display: table-row;
+}
+
+.mj-grid-row {
+    white-space: nowrap;
+    display: table-row;
+}
+
+.mj-grid-head { display: table-header-group; }
+
+.mj-grid-body { display: table-row-group; }
+
+.mj-grid .mj-grid-header-cell { 
+    position: relative;             /* need this for scrolling */
+    display: table-cell;
+    padding-left: 4px;   
+    padding-right: 4px;
+    padding-top: 5px;     
+    padding-bottom: 5px;
+    font-size: 11px;
+    vertical-align: middle;
+    box-sizing: border-box;   
+}
+
+.mj-grid .mj-grid-cell { 
+    position: relative;      /* need this for scrolling */
+    display: table-cell;
+    padding: 4px;     
+    font-size: 11px;
+    vertical-align: middle;
+    box-sizing: border-box;    
+}
+
+.mj-grid .mj-grid-row.mj-selected { background: #F3F1F1; }
+
+.mj-grid .mj-grid-cell.mj-selected { background: #F3F1F1; }
+
+.mj-grid .mj-grid-header-cell {     
+    text-align: center; 
+    border-bottom: 1px solid transparent;
+    border-right: 1px solid transparent;
+    font-weight: normal;
+    height: 15px;
+    background: #eee;
+}
+
+.mj-grid .mj-grid-header-cell .mj-text {  }
+
+.mj-grid .mj-grid-cell {
+    border-right: 1px solid transparent;
+    border-bottom: 1px solid transparent;  
+}
+
+.mj-grid .mj-grid-vertical-scrollbar-container { position: absolute; right: 0px; top: 0px; }
+
+.mj-grid .mj-grid-horizontal-scrollbar-container { position: absolute; left: 0px; bottom: 0px; }
+
+.mj-grid .mj-grid-header-cell .mj-arrow-container {
+    position: absolute;
+    top: 50%;
+    bottom: 50%;
+    right: 0px;
+}
+
+.mj-grid .mj-grid-header-cell .mj-arrow {
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    right: 2px;
+    top: -6px;
+    bottom: -6px;
+    display: none;
+}
+
+.mj-grid .mj-checkbox-box { display: inline-block; }
+
+.mj-grid .mj-select { border-radius: 5px; outline: none; width: 100%; }
+
+.mj-grid .mj-fixed-col {
+    /*position: absolute;
+    left:0;
+    top:auto;*/
+
+    z-index: 1;
+    height: inherit;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;   
+    background: #eee;
+}
+
+.mj-grid .mj-input { width: 100%; outline: none;  padding: 2px; }

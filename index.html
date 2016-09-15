@@ -1,0 +1,831 @@
+﻿<!doctype html>
+<html>
+<head>
+<title>mjGrid</title>
+
+<script src="js/libs/jquery-1.11.3.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
+<link rel="stylesheet" type="text/css" href="css/mjAll.css">
+<link rel="stylesheet" type="text/css" href="css/themes/blackAndWhite.css">
+
+<style>
+
+    .demo .widget {  height: 250px; }
+
+    .source-panel { display: none; }
+
+    .api-panel { display: none; }
+
+    .buttons { margin-top: 20px; }
+    .select-mode-btn  { border: 1px solid #ccc; border-radius: 5px; padding: 5px; background: #ccc; color: #333; text-decoration: none; }
+
+    .select-mode-btn:hover { background: #ddd; }
+
+</style>
+
+<script src="js/mjCore.js"></script>
+<script src="js/mjGrid.js" ></script>
+<script src="js/mjScrollBar.js" ></script>
+<script src="js/mjSearchBox.js" ></script>
+<script src="js/mjListBox.js" ></script>
+<script src="js/mjDropDown.js" ></script>
+
+<script src="js/libs/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="js/libs/jquery-ui-1.11.4.custom/jquery-ui.theme.css" />
+
+<script>
+
+$(document).ready(function () {
+
+    var self = this;
+
+    function message(msg) { $(".status").html(msg); }
+
+    function fillFunctionTable(json) {
+
+        $(".op").empty();
+
+        var i = 0;
+
+        while (i < json.length) {
+            var tr = $("<tr>");
+
+            for (var j = 0; j < 3 && i < json.length; j++) {
+                var o = json[i++];
+
+                var td = $("<td><a href='#' data-op='" + o.op + "' >" + o.text + "</a>");
+                td.data(o.val);
+
+                tr.append(td);
+
+            }
+
+            $(".op").append(tr);
+        }
+
+        rebind();
+    }
+
+    $(".examples li").click(function (e) {
+
+        e.preventDefault();
+
+        $(".examples li.active").removeClass("active");
+        $(e.currentTarget).addClass("active");
+    });
+
+    $(".menu td").click(function (e) {
+
+        e.preventDefault();
+
+        $(".menu td.active").removeClass("active");
+        $(e.currentTarget).addClass("active");
+    });
+
+
+    $(".menu a").click(function (e) {
+
+        e.preventDefault();
+
+        var op = $(e.currentTarget).attr("data-op");
+
+        $(".demo-panel").hide();
+        $(".source-panel").hide();
+        $(".api-panel").hide();
+
+        var api = [{ name: "addRow(id)", description: "" },
+                    { name: "insertRow()", description: "" },
+                    { name: "removeRow(id)", description: "" },
+                    { name: "updateCell()", description: "" },
+                    { name: "addColumn()", description: "" },
+                    { name: "removeColumn()", description: "" },
+                    { name: "hideRow()", description: "" },
+                    { name: "showRow(id)", description: "" },
+                    { name: "getRows()", description: "" },
+                    { name: "sort(id)", description: "" },
+                    { name: "select()", description: "" },
+                    { name: "scrollToRow()", description: "" },
+                   ];
+
+        switch (op) {
+            case "demo":
+
+                $(".demo-panel").show();
+                break;
+
+            case "source":
+
+                $(".source-panel").show();
+                break;
+
+            case "api":
+
+                $(".api-panel").show();
+
+                var str = "";
+
+                $.each(api, function (index, o) {
+
+                    str += "<tr><td>" + o.name + "</td></tr>";
+                });
+
+                $(".api-table").html(str);
+
+                break;
+        }
+    });
+
+    function getData(n) {
+
+        var musicians = ["Prince", "Michael Jackson", "Brand X", "Emerson Lake and Palmer", "Steely Dan", "Weather Report", "Stranglers", "Santana", "Kate Bush", "Kelly Clarkson", "Yes", "Al Dimeloa", "Django Rheinhardt", "Pat Metheny", "David Bowie", "Paco De Lucia", "Chaka Khan", "Elton John", "Mike Oldfield", "Status Quo", "Supertramp", "Mister Mister", "The Eagles", "Beatles", "Simple Minds", "Gary Numan", "Duran Duran"];
+        var companies = ["Apple", "JP Morgan", "Google", "Amazon", "HP", "Deutsche Bank", "Adobe", "Woolworths", "Exxon", "Goldman Sachs"];
+        var cities = ["Sydney", "Cairo", "Istanbul", "New York", "Tokyo", "Sao Paulo", "Cancun", "Rome", "Bergen", "Oslo", "Stockholm", "Copenhagen"];
+        var planets = ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"];
+        var flowers = ["rose", "petunia", "Chrysanthemum", "tulip", "hydranga", "jonquil", "darnation", "daffodil", "sunflower", "gerbera"];
+        var languages = ["english", "french", "italian", "german", "japanese", "portuguese", "spanish", "greek"];
+        var countries = ["iceland", "thailand", "nepal", "angola", "botswana", "eygpt", "south africa", "israel"];
+
+        var data = [];
+
+        var len = [musicians.length, companies.length, cities.length, planets.length, flowers.length, languages.length, countries.length];
+
+        for (var i = 0; i < n-1; i++) {
+
+            var j = 0;
+
+            data.push({
+                id: i+1,
+                musician: musicians[Math.floor(Math.random() * len[j++])],
+                company: companies[Math.floor(Math.random() * len[j++])],
+                city: cities[Math.floor(Math.random() * len[j++])],
+                planet: planets[Math.floor(Math.random() * len[j++])],
+                flower: flowers[Math.floor(Math.random() * len[j++])],
+                language: languages[Math.floor(Math.random() * len[j++])],
+                country: countries[Math.floor(Math.random() * len[j++])]
+            }
+            );
+        }
+
+        var j = 0;
+
+        data.push({
+            id: n,
+            musician: "Jeff Beck",
+            company: companies[Math.floor(Math.random() * len[j++])],
+            city: cities[Math.floor(Math.random() * len[j++])],
+            planet: planets[Math.floor(Math.random() * len[j++])],
+            flower: flowers[Math.floor(Math.random() * len[j++])],
+            language: languages[Math.floor(Math.random() * len[j++])],
+            country: countries[Math.floor(Math.random() * len[j++])]
+        });
+
+        return data;
+    }
+
+    //function cellFormat(val, y, x)
+    //{
+    //    if (x == 2)
+    //        return "formatted";
+
+    //    return val;
+    //}
+
+    var ops = [{ op: "addRow", text: "add row" },
+                { op: "insertRow", text: "insert row" },
+                { op: "removeRow", text: "remove row" },
+                { op: "updateRow", text: "update row" },
+                { op: "addColumn", text: "add column" },
+                { op: "insertColumn", text: "insert column" },
+                { op: "removeColumn", text: "remove column" },
+                { op: "updateCell", text: "updateCell" },
+                { op: "getRows", text: "getRows" },
+                { op: "sort", text: "sort" },
+                { op: "select", text: "select" },
+                { op: "deselectAll", text: "deselect All" },
+                { op: "scrollToRow", text: "scroll to row" },
+                { op: "getTopRowIndex", text: "getTopRowIndex" },
+                { op: "checkColumnAt", text: "check column" },
+                { op: "uncheckColumnAt", text: "uncheck column" },
+                { op: "disableRow", text: "disable row" },
+                { op: "enableRow", text: "enable row" },
+                { op: "disableAll", text: "disable all rows" },
+                { op: "enableAll", text: "enable all rows" },
+    ];
+
+    $(".virtual").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{ text: "id", data_field: "id", width: 50},
+                        { text: "Musician", data_field: "musician", width: 100 },
+                        { text: "Company", data_field: "company", width: 100 },
+                        { text: "city", data_field: "city", width: 100 },
+                        { text: "planet", data_field: "planet", width: 100 },
+                        { text: "Flower", data_field: "flower", width: 100 },
+                        { text: "Language", data_field: "language", width: 100 },
+                        { text: "Country", data_field: "country", width: 100 }];
+
+        var rows = getData(1000);
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 9,
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+
+        $(".widget").on("cellClick", function (e, options) {
+            console.log("cellClick");
+        });
+    });
+
+    $(".set-width").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{ text: "id", data_field: "id" },
+                        { text: "Musician", data_field: "musician" },
+                        { text: "Company", data_field: "company" },
+                        { text: "city", data_field: "city" },
+                        { text: "planet", data_field: "planet" },
+                        { text: "Flower", data_field: "flower" },
+                        { text: "Language", data_field: "language" },
+                        { text: "Country", data_field: "country" }];
+
+        var rows = getData(100000);
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 9,
+            width: 200
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    $(".non-virtual").click(function(e) {
+
+        fillFunctionTable(ops);
+
+        function cellRender()
+        {
+            return "<div style='width: 300px;'>" + options.value + "</div>";           
+        }
+
+        var columns = [{ text: "id", data_field: "id", width: 50 },
+                        { text: "name", data_field: "name", width: 100 },
+                        { text: "type", data_field: "type", width: 100 },
+                        { text: "location", data_field: "location", width: 300, cellRender: cellRender },
+                        { text: "start time", data_field: "start_time", width: 100 },
+                        { text: "planet", data_field: "planet", width: 100}];
+
+        var rows = [];
+
+        var dt = new Date();
+
+        for (var i = 0; i < 100; i++)
+            rows[i] = { id: i, name: "robert " + i, type: "my type" + i, location: "here and there " + i, start_time: dt.toDateString(), planet: "earth" };
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            fixed_columns: 3,
+            virtual_mode: false
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    $(".column-types").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{ text: "id", data_field: "id", width: 50 },
+                        { text: "name", data_field: "name", type: "string", width: 100 },
+                        { text: "active", data_field: "active", type: "checkbox", width: 100 },
+                        { text: "selected", data_field: "selected", type: "radiobutton", width: 100 },
+                        { text: "city", data_field: "city", type: "dropdown", width: 100, valid_values: [{ id: 0, value: "sydney" }, { id: 1, value: "melbourne" }] }];
+
+        var rows = [];
+
+        var dt = new Date();
+
+        for (var i = 0; i < 100; i++)
+            rows[i] = { id: i, name: "test " + i, active: true, selected: 0, city: 0 };
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 9
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    $(".edit-cells").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{ text: "id", data_field: "id", width: 50 },
+                        { text: "name", data_field: "name", type: "string", width: 100, editable: true }];
+
+        var rows = [];
+
+        var dt = new Date();
+
+        for (var i = 0; i < 100; i++)
+            rows[i] = { id: i, name: "test " + i };
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 9
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    $(".complex").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{ text: "identifier and authorization", data_field: "id", type: "text", width: "50px", align: "center", wrap_text: true, sortable: true },
+                        { text: "name", data_field: "name", type: "string", width: "250px", wrap_text: true, sortable: true },
+                        { text: "selected", data_field: "selected", type: "checkbox", width: "80px", align: "center", class_name: "draggable", sortable: true },
+                        { text: "edit", data_field: "edit_image", type: "image", width: "50px", align: "center", class_name: "draggable", sortable: true },
+                        { text: "delete", data_field: "delete_image", type: "image", width: "50px", align: "center", sortable: true },
+                        { text: "color", data_field: "color", type: "string", width: "100px", align: "center", sortable: true },
+                        { text: "active", data_field: "active", type: "radiobutton", width: "100px", align: "center", sortable: true }];
+
+        var rows = [];
+
+        var dt = new Date();
+
+        var quotes = ["Organizing is what you do before you do something, so that when you do it, it is not all mixed up",
+        "If a country is to be corruption free and become a nation of beautiful minds, I strongly feel there are three key societal members who can make a difference. They are the father, the mother and the teacher.",
+        "Don't walk behind me; I may not lead. Don't walk in front of me; I may not follow. Just walk beside me and be my friend.",
+        "The secret of genius is to carry the spirit of the child into old age, which means never losing your enthusiasm.",
+        "Two roads diverged in a wood, and I—I took the one less traveled by, And that has made all the difference.  –Robert Frost",
+        "Life is what happens to you while you’re busy making other plans. –John Lennon",
+        "Twenty years from now you will be more disappointed by the things that you didn’t do than by the ones you did do, so throw off the bowlines, sail away from safe harbor, catch the trade winds in your sails.  Explore, Dream, Discover. –Mark Twain",
+        "Every child is an artist.  The problem is how to remain an artist once he grows up. –Pablo Picasso",
+        "You can never cross the ocean until you have the courage to lose sight of the shore. –Christopher Columbus"];
+
+        for (var i = 0; i < 100; i++)
+            rows[i] = { id: i, name: quotes[i % quotes.length], selected: false, edit_image: "images/edit.png", delete_image: "images/delete.png", color: "red", active: false };
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 9,
+            dragdrop: "cells"
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    $(".custom-render").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        function columnHeaderCellRender(options)
+        {
+            var str = "<table style='width: 100%;'>";
+            str += "<tr>";
+            str += "<td>" + options.value + "</td>";
+            str += "<td><a href='#' data-colid='" + options.col.id + "' class='delete-col' style='text-decoration: none; text-align: center; display: inline-block; width: 20px; line-height: 20px; height: 20px; border: 1px solid #333; border-radius: 5px; font-size: 18px; color: #f00; background: #fff;'>x</a></td>";
+            str += "</tr>";
+            str += "</table>";
+
+            return str;
+        }
+
+        function cellRender(options)
+        {
+            return "<table style='width: 100%;'><tr><td style='color: red;'>custom render</td><td><img src='images/beyonce.jpg' /></td></tr></table>";
+        }
+
+        var i = 0;
+
+        var columns = [{ id: i++, text: "identifier and authorization", data_field: "id", type: "text", width: "50px", align: "center", wrap_text: true},
+                        { id: i++, text: "name", data_field: "name", type: "string", width: "250px", wrap_text: true, cellRender: cellRender, columnHeaderCellRender: columnHeaderCellRender },
+                        { id: i++, text: "selected", data_field: "selected", type: "checkbox", width: "80px", align: "center", columnHeaderCellRender: columnHeaderCellRender },
+                        { id: i++, text: "edit", data_field: "edit_image", type: "image", width: "50px", align: "center", columnHeaderCellRender: columnHeaderCellRender },
+                        { id: i++, text: "delete", data_field: "delete_image", type: "image", width: "50px", align: "center", columnHeaderCellRender: columnHeaderCellRender },
+                        { id: i++, text: "color", data_field: "color", type: "string", width: "100px", align: "center", columnHeaderCellRender: columnHeaderCellRender },
+                        { id: i++, text: "material", data_field: "material", type: "string",  align: "center", columnHeaderCellRender: columnHeaderCellRender }];
+
+        var rows = [];
+
+        var dt = new Date();
+
+        var quotes = ["Be yourself; everyone else is already taken",
+        "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.",
+        "You've gotta dance like there's nobody watching, love like you'll never be hurt, Sing like there's nobody listening, And live like it's heaven on earth..",
+        "You know you're in love when you can't fall asleep because reality is finally better than your dreams.",
+        "A room without books is like a body without a soul",
+        "You only live once, but if you do it right, once is enough",
+        "Be the change that you wish to see in the world",
+        "If you want to know what a man's like, take a good look at how he treats his inferiors, not his equals.",
+        "If you tell the truth, you don't have to remember anything"];
+
+        for (var i = 0; i < 10; i++)
+            rows[i] = { id: i, name: quotes[i % quotes.length], selected: false, edit_image: "images/edit.png", delete_image: "images/delete.png", color: "red", material: "wood" };
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 2,
+            select_mode: "cell"
+        };
+
+        $(".widget").mjGrid(options);
+
+        $(".delete-col").click(function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            var id = $(e.currentTarget).attr("data-colid");
+
+            $(".widget").mjGrid("removeColumn", id);
+        });
+
+        gridEventHandler();
+    });
+
+    $(".dragdrop-cells").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{ text: "id", data_field: "id", class_name: "draggable" },
+                        { text: "Musician", data_field: "musician", class_name: "draggable" },
+                        { text: "Company", data_field: "company", class_name: "draggable" },
+                        { text: "city", data_field: "city", class_name: "draggable" },
+                        { text: "planet", data_field: "planet", class_name: "draggable" },
+                        { text: "Flower", data_field: "flower", class_name: "draggable" }];
+
+        var rows = getData(100000);
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 9,
+            dragdrop: "cells"
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    $(".dragdrop-rows").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{ text: "id", data_field: "id", class_name: "draggable" },
+                        { text: "Musician", data_field: "musician", class_name: "draggable" },
+                        { text: "Company", data_field: "company", class_name: "draggable" },
+                        { text: "city", data_field: "city", class_name: "draggable" },
+                        { text: "planet", data_field: "planet", class_name: "draggable" },
+                        { text: "Flower", data_field: "flower", class_name: "draggable" }];
+
+        var rows = getData(2);
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 9,
+            dragdrop: "rows"
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    $(".fixed-columns").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{text: "id", data_field: "id"},
+                        {text: "Musician", data_field: "musician"},
+                        {text: "Company", data_field: "company"},
+                        {text: "city", data_field: "city"},
+                        { text: "planet", data_field: "planet" },
+                        { text: "Flower", data_field: "flower" },
+                        { text: "language", data_field: "language" },
+                        { text: "country", data_field: "country" },
+        { text: "Musician", data_field: "musician" },
+                        { text: "Company", data_field: "company" },
+                        { text: "city", data_field: "city" },
+                        { text: "planet", data_field: "planet" },
+                        { text: "Flower", data_field: "flower" },
+                        { text: "language", data_field: "language" },
+                        { text: "country", data_field: "country" }];
+
+        var rows = getData(1000);
+
+        var options = {
+            columns: columns,
+            fixed_columns: 3,
+            rows: rows,
+            page_size: 9,
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    $(".small-grid").click(function (e) {
+
+        fillFunctionTable(ops);
+
+        var columns = [{ text: "id", data_field: "id" },
+                        { text: "Musician", data_field: "musician" },
+                        { text: "Company", data_field: "company" }];
+
+        var rows = getData(1000);
+
+        var options = {
+            columns: columns,
+            rows: rows,
+            page_size: 2,
+            height: 35,
+            show_column_headers: false
+        };
+
+        $(".widget").mjGrid(options);
+
+        gridEventHandler();
+    });
+
+    function gridEventHandler()
+    {
+        $(".widget").on("columnHeaderCellClick", function (e, options) {
+
+            message(" columnHeaderCellClick: row = " + options.row_index + " col = " + options.col_index);
+        });
+
+        $(".widget").on("cellClick", function (e, options) {
+
+            message("cellClick: row = " + options.row_index + " col = " + options.col_index);
+        });
+
+        $(".widget").on("dragend", function () {
+
+            var rows = $(".widget").mjGrid("getRows");
+
+            console.log(rows);
+        });
+    }
+
+    function rebind() {
+        $(".op a").click(function (e) {
+
+            e.preventDefault();
+
+            var op = $(e.currentTarget).attr("data-op");
+
+            var val = $(e.currentTarget).parent().data();
+
+            message("");
+
+            //console.log("op = " + op + " val = " + val);
+
+            var dt = new Date();
+
+            var new_data = { id: 999999, musician: "new row", company: "east of nowhere", city: dt.toDateString(), planet: "jupiter", flower: "images/edit.png" };
+
+            var new_column = { text: "address", data_field: "address", type: "text", width: "100px", align: "center" };
+
+            var selected = $(".widget").mjGrid("getSelected");
+
+            switch (op) {
+
+                case "addRow":
+
+                    $(".widget").mjGrid("addRow", new_data);
+                    break;
+
+                case "insertRow":
+
+                    if (selected.length > 0)
+                        $(".widget").mjGrid(op, selected[0], new_data);
+                    break;
+
+                case "deleteRow":
+
+                    if (selected.length > 0)
+                        $(".widget").mjGrid(op, selected[0]);
+                    break;
+
+                case "updateRow":
+
+                    new_data.id = selected[0].data.id;
+
+                    if (selected.length > 0)
+                        $(".widget").mjGrid(op, selected[0], new_data);
+                    break;
+
+                case "disableRow":
+                case "enableRow":
+
+                    if (selected.length > 0)
+                        $(".widget").mjGrid(op, selected[0]);
+                    break;
+
+                case "removeRow":
+
+                    if (selected.length > 0)
+                        $(".widget").mjGrid(op, selected[0]);
+                    break;
+
+                case "addColumn":
+
+                    $(".widget").mjGrid(op, new_column);                    
+                    break;
+
+                case "insertColumn":
+
+                    $(".widget").mjGrid(op, 1, new_column);
+                    break;
+
+                case "removeColumn":
+
+                    $(".widget").mjGrid(op, 1);
+                    break;
+
+                case "updateCell":
+
+                    var c = $(".widget").mjGrid("getColumns");
+                    $(".widget").mjGrid(op, selected[0], c[1], "new val");
+                    break;
+
+                case "select":
+
+                    var rows = $(".widget").mjGrid("getRows");
+
+                  $(".widget").mjGrid("select", rows[2]);
+                  break;
+
+                case "getRows":
+
+                    var rows = $(".widget").mjGrid(op);
+
+                    console.log(rows);
+
+                case "checkColumnAt":
+                case "uncheckColumnAt":
+
+                    $(".widget").mjGrid(op, 6);
+                    break;
+
+                case "sort":
+
+                    $(".widget").mjGrid(op, 1);
+                    break;
+
+                case "scrollToRow":
+                    $(".widget").mjGrid(op, 20);
+                    break;               
+
+                default:
+
+                    console.log($(".widget").mjGrid(op));
+                    break;
+
+            }
+        });
+    }
+
+    function createSearchBox() {
+
+        $(".searchbox").mjSearchBox();
+
+        $(".searchbox").on("mjKeyup", function (e, val) {
+
+            message("keyup: " + val);
+
+            $(".widget").mjGrid("filter", val, function (r, val) {
+
+                if (r.data.hasOwnProperty("musician"))    
+                    return r.data.musician.toLowerCase().indexOf(val) >= 0;
+                else
+                    return r.data.name.toLowerCase().indexOf(val) >= 0;
+            });
+        });
+    }
+
+    createSearchBox();
+
+    $(".select-mode-btn").click(function (e) {
+
+        var select_mode = $(e.currentTarget).attr("select-mode");
+
+        $(".widget").mjGrid("setSelectMode", select_mode);
+    });
+
+    $(".virtual").trigger("click");
+
+});
+
+</script>
+
+</head>
+
+<body>
+
+<div class="demo wrapper">
+
+    <div class="left-panel">
+
+        <br />
+
+	    <ul class="vertical-menu examples">
+            <li><strong>examples</strong></li>
+		    <li class="active"><a href="#" class="virtual">virtual grid</a></li>
+            <li><a href="#" class="set-width">set width</a></li>
+		    <li><a href="#" class="non-virtual">non virtual grid</a></li>
+            <li><a href="#" class="column-types">column types</a></li>
+            <li><a href="#" class="edit-cells">edit cells</a></li>
+            <li><a href="#" class="complex">complex</a></li>
+            <li><a href="#" class="custom-render">custom render</a></li>
+            <li><a href="#" class="fixed-columns">fixed columns</a></li>
+            <li><a href="#" class="dragdrop-rows">dragdrop rows</a></li>
+            <li><a href="#" class="dragdrop-cells">dragdrop cells</a></li>
+            <li><a href="#" class="small-grid">small grid</a></li>
+	    </ul>
+
+    </div>
+
+    <div class="right-panel">
+
+        <table class="menu">
+            <tr>
+                <td class="active"><a href="#" data-op="demo">Demo</a></td>
+                <td><a href="#" data-op="source">Source</a></td>
+                <td><a href="#" data-op="api">API</a></td>
+            </tr>
+        </table>
+
+        <div class="content">
+
+            <div class="demo-panel">
+       
+                <div class="widget"></div>    
+
+                <br />
+                
+                <div class="searchbox"></div>            
+
+                <br />
+
+                <div class="status"></div>
+
+                <div class="buttons">
+                    <a href="#" class="select-mode-btn" select-mode="row">row select</a>
+                    <a href="#" class="select-mode-btn" select-mode="multi_row">multi row select</a>
+                    <a href="#" class="select-mode-btn" select-mode="cell">cell select</a>
+                    <a href="#" class="select-mode-btn" select-mode="multi_cell">mulit cell select</a>
+                 </div>
+
+
+                <p>functions</p>
+
+                <table class="op"></table>
+
+            </div>
+
+            <div class="source-panel"></div>
+
+            <div class="api-panel">
+
+                <table class="api-table"></table>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
